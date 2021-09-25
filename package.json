@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/PockyBum522/sms_museum_assistant#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "axios": "^0.21.4",
+    "express": "^4.17.1",
+    "telnyx": "^1.22.0"
   }
 }
