@@ -67,8 +67,8 @@ function messagePreviouslyReceived(reqBody) {
 app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
 
     // Validate message
-    if(isIncomingMessage(req.body) && !messagePreviouslyReceived(req.body)) {
-        console.log(`incoming valid message that contains ${req.body.data.payload.text}`);
+    if(!isIncomingMessage(req.body) || messagePreviouslyReceived(req.body)) {
+        return;
     }
     // Categorize message
     // console.log("Incoming webhook call")
@@ -124,4 +124,19 @@ app.listen(port, () => {
   }
 }
 
+*/
+
+/*
+[6:49 PM, 9/25/2021] David Sikes: symbl app id: 59596b6a454f544659433654426561636549437868326d686747384852796669
+[6:48 PM, 9/25/2021] David Sikes: symbl secret: 34664e486c7051536762506770696b6e645f42616b58466147557049394c64726b33396a736735547a3165334d4d4273584e7a7638524b6f745a665748637157
+*/
+/*
+curl -k -X POST "https://api.symbl.ai/oauth2/token:generate" \
+     -H "accept: application/json" \
+     -H "Content-Type: application/json" \
+     -d $'{
+      "type" : "application",
+      "appId": "'59596b6a454f544659433654426561636549437868326d686747384852796669'",
+      "appSecret": "'34664e486c7051536762506770696b6e645f42616b58466147557049394c64726b33396a736735547a3165334d4d4273584e7a7638524b6f745a665748637157'"
+    }'
 */
