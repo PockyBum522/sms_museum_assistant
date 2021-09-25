@@ -30,7 +30,7 @@ const responses = {
   500: 'Something went wrong! Please contact support@symbl.ai'
 }
 
-request(options, function (error, response) {
+request(options, function (err, response) {
   const statusCode = response.statusCode;
   if (err || Object.keys(responses).indexOf(statusCode.toString()) !== -1) {
     throw new Error(responses[statusCode]);
