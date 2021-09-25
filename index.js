@@ -11,6 +11,8 @@ const incomingWebhookEndpoint = 'onIncoming/session136';
 
 const assistantIntroText = "Welcome to The Orlando Museum of Art! I can be your assistant during your visit.\n\nAsk me anything from information about an artwork to assistance navigating in the museum.\n\nFor example, you can ask: 'Tell me more about Van Gogh's Starry Night' or 'Where is the nearest water fountain?'\n\nAfter your visit, ask me about the best way to leave a review or feedback!";
 
+let lastTenReceivedIDsArray = [];
+
 var options = {
     inflate: true,
     limit: '100kb',
@@ -49,17 +51,30 @@ app.get('/startListener/:phoneNumber', (req, res) => {
 
 });
 
-function validateMessage(reqBody) {
+function isIncomingMessage(reqBody) {
     return reqBody.data.event_type === "message.received";
+}
+
+function messagePreviouslyReceived(reqBody) {
+    if(lastTenReceivedIDsArray.includes(reqBody.data.id)) {
+        return true;
+    }
+
+    lastTenReceivedIDsArray.push(reqBody.data.id);
+    return false;
 }
 
 app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
 
+    // Validate message
+    if(isIncomingMessage(req.body) && !messagePreviouslyReceived(req.body)) {
+        console.log(`incoming valid message that contains ${req.body.data.payload.text}`);
+    }
     // Categorize message
-    console.log("Incoming webhook call")
-    console.log(req.body)
-    console.log(validateMessage(req.body));
-    console.log()
+    // console.log("Incoming webhook call")
+    // console.log(req.body)
+    // console.log(validateMessage(req.body));
+    // console.log()
     // Build response
 
     // Send response
