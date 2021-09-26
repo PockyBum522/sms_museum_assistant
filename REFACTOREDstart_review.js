@@ -49,24 +49,26 @@ function messagePreviouslyReceived(reqBody) {
     return false;
 }
 
-// Main function
+// Main function, the endpoint below is called by Telnyx on message response
 function startUserReviewProcess(){
-    // telnyx.messages
-    // .create(
-    // {
-    //     'from': '+12182203711', // Your Telnyx number
-    //     'to': formattedPhoneNumber,
-    //     'text': reviewPromptText
-    // })
-    // .then(() => {
-    //     console.log(`Review message sent for: ${ formattedPhoneNumber }`)
-    //     console.log(`Now listening for response on: /${incomingWebhookEndpoint}`)
-    // })
-    // .catch(
-    //     (err) => {
-    //         console.error(err)
-    //     }
-    // );
+    telnyx.messages
+    .create(
+    {
+        'from': '+12182203711', // Your Telnyx number
+        'to': formattedPhoneNumber,
+        'text': reviewPromptText
+    })
+    .then(() => {
+
+        console.log(`Review message sent for: ${ formattedPhoneNumber }`)
+        console.log(`Now listening for response on: /${incomingWebhookEndpoint}`)
+        
+    })
+    .catch(
+        (err) => {
+            console.error(err)
+        }
+    );
 };
 
 // Symbl workers
@@ -168,7 +170,7 @@ expressApp.post(`/${incomingWebhookEndpoint}`, (req, res) => {
     // Otherwise:
     await createSymblJobWithSmsBody(req.body)
     .then(
-        (conversationId) => console.log(conversationId)
+        (conversationId) => console.log(`Promise fulfilled, conversationId: ${conversationId}`)
         //makeSymblSentimentRequest(symblConversationId)
     );    
 
