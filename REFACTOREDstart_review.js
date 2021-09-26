@@ -96,7 +96,7 @@ function createSymblJobFromSmsBody(smsReqBody){
                         }
                     }
                 ],
-                "webhookUrl" : "http:\/\/pockybum522.com\/symblJobUpdatesWebhook"
+                "webhookUrl" : "http://pockybum522.com/symblJobUpdatesWebhook"
             };
             
             console.log('First');
@@ -167,7 +167,7 @@ expressApp.post(`/${incomingTelnyxWebhookEndpoint}`, (req, res) => {
 expressApp.post(`/symblJobUpdatesWebhook`, (req, res) => {
     
     console.log("=======================================================================");
-    console.log(req);
+    console.log(req.body);
 
     if (req.body.status === 'completed'){
         console.log ("Run job sentiment get here")
