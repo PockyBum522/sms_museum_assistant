@@ -101,8 +101,8 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
             console.log(res);
             axios.get(`https://api.symbl.ai/v1/conversations/${conversationId}/messages?sentiment=true`)
             .then((res) => {
-                console.log(res);
-                // if(res.status === 'completed') {
+                console.log(res.data.status);
+                // if(res.data.status === 'completed') {
                 // }
             }).catch((err) => {
                 // console.error(err);
