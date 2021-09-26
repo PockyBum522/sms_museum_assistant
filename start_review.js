@@ -98,11 +98,22 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
             headers: headers
         })
         .then((res) => {
-            console.log(res.data.status);
-            // console.log(res);
-            if(res.data.status === 'completed') {
-                console.log("job is DONE son");
-            }
+            
+            let test = await axios.get(`https://api.symbl.ai/v1/job/${res.data.jobId}`, {
+                headers: headers
+            })
+            console.log(test);
+
+            // while (test != 'complete'){
+            //     test = axios.get(`https://api.symbl.ai/v1/job/${res.data.jobId}`, {
+            //         headers: headers
+            //     })
+            // }
+
+            // Happy path
+
+
+
             // axios.get(`https://api.symbl.ai/v1/conversations/${conversationId}/messages?sentiment=true`)
             // .then((res) => {
             // }).catch((err) => {
