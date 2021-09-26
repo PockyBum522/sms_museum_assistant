@@ -112,7 +112,7 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
             console.error(err);
         })
     }).catch((err) => {
-        // console.error(err);
+        console.error(err);
     })
     // fetch('https://api.symbl.ai/v1/process/text').then((res) => {
     //     console.log(`statusCode: ${res.statusCode}`);
