@@ -90,14 +90,14 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
       };
 
     // Sending off user text for evaluation
-    request(options, function (err, response) {
+    Promise.resolve(request(options, function (err, response) {
         const statusCode = response.statusCode;
         if (err || Object.keys(responses).indexOf(statusCode.toString()) !== -1) {
           throw new Error(responses[statusCode]);
         }
         console.log('Status code: ', statusCode);
         console.log('Body', response.body);
-      }).then(() => {
+      })).then(() => {
           console.log("is this even allowed");
       });
     // Send response
