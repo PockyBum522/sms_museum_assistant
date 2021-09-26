@@ -110,7 +110,7 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
             }
             loop();
 
-            axios.get(`https://api.symbl.ai/v1/conversations/${conversationId}/messages?sentiment=true`)
+            axios.get(`https://api.symbl.ai/v1/conversations/${conversationId}/messages?sentiment=true`, { headers: headers})
             .then((res) => {
                 console.log("do something with the sentiment");
                 console.log(res);
