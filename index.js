@@ -10,6 +10,7 @@ const incomingWebhookUrlBase = 'http://pockybum522.com';
 const incomingWebhookEndpoint = 'onIncoming/session136';
 
 const assistantIntroText = "Welcome to The Orlando Museum of Art! I can be your assistant during your visit.\n\nAsk me anything from information about an artwork to assistance navigating in the museum.\n\nFor example, you can ask: 'Tell me more about Van Gogh's Starry Night' or 'Where is the nearest water fountain?'\n\nAfter your visit, ask me about the best way to leave a review or feedback!";
+const reviewPromptText = "We hope you had a great time at the museum! Please respond with a detailed review of your visit.";
 
 let lastTenReceivedIDsArray = [];
 
@@ -64,6 +65,26 @@ function messagePreviouslyReceived(reqBody) {
     return false;
 }
 
+app.get(`/reviewTrigger`, (req, res) => {
+  telnyx.messages
+        .create(
+        {
+            'from': '+12182203711', // Your Telnyx number
+            'to': formattedPhoneNumber,
+            'text': reviewPromptText
+        })
+        .then(() => {
+            res.send(`Review message sent for: ${ formattedPhoneNumber }`)
+            console.log(`Review message sent for: ${ formattedPhoneNumber }`)
+            console.log(`Now listening for response on: /${incomingWebhookEndpoint}`)
+        })
+        .catch(
+            (err) => {
+                console.error(err)
+            }
+        )
+});
+
 app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
 
     // Validate message
@@ -71,10 +92,10 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
         return;
     }
     // Categorize message
-    // console.log("Incoming webhook call")
-    // console.log(req.body)
-    // console.log(validateMessage(req.body));
-    // console.log()
+    const messageCategories = {
+      "learning": "learning",
+      "assistance": "assistance"
+    }
     // Build response
 
     // Send response
