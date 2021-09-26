@@ -7,7 +7,7 @@ const axios = require('axios')
 const telnyx = require('telnyx')(telnyxApiKey);
 const bodyParser = require('body-parser')
 
-console.log(`api key: ${telnyxApiKey}`);
+//console.log(`api key: ${telnyxApiKey}`);
 
 // CONFIGURATION
 const expressApp = express()
@@ -103,17 +103,12 @@ function createSymblJobFromSmsBody(smsResponseBody){
                 ]
             };
             
-            console.log(`About to submit job to Symbl.ai from SMS: ${smsResponseBody.data.payload.text}`);
-
             axios.post('https://api.symbl.ai/v1/process/text', symblSmsSubmitRequestJson, {
                 headers: symblRequestHeaders
             })
             .then((res) => {
 
-                let symblConversationId = res.data.conversationId;
-                let symblJobId = res.data.jobId;
-
-                resolve(symblConversationId, symblJobId);
+                resolve(res.data);
 
             }).catch((err) => {
                 
@@ -124,25 +119,86 @@ function createSymblJobFromSmsBody(smsResponseBody){
     })
 }
 
-// function getSymblSentiment(symblConversationId) {
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function waitForJobCompletion(symblJobId){
     
-//     return new Promise((resolve, reject) => {
+    const symblRequestHeaders = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${symblAccessToken}`
+    };
 
-//         console.log('Requesting sentiment GET now');
+    let jobStatus = 'in_progress';
 
-//         axios.get(`https://api.symbl.ai/v1/conversations/${symblConversationId}/messages?sentiment=true`, { headers: symblRequestHeaders})
-//         .then((res) => {
+    while(jobStatus !== 'completed'){
+
+        console.log("Looooooooooop, brother")
+
+        const p = axios.get(`https://api.symbl.ai/v1/job/${symblJobId}`, { 
+            headers: symblRequestHeaders 
+        });
+        
+        p.then((res) =>
             
-//             console.log("got further, in then beyond sentiment get")
+            jobStatus = res.data.status
 
-//             resolve(res);
+        )
+        .catch((err) => console.log(err));            
+        
+        await sleep(1000);
+        
+        console.log(jobStatus)
+    }
+}
 
-//         }).catch((err) => {
-//             console.error(err);
-//             reject(err);
-//         })       
-//     })
-// }
+function getSymblSentiment(symblConversationId) {
+    
+    return new Promise((resolve, reject) => {
+
+        const symblRequestHeaders = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${symblAccessToken}`
+        };
+
+        axios.get(`https://api.symbl.ai/v1/conversations/${symblConversationId}/messages?sentiment=true`, { headers: symblRequestHeaders})
+        .then((res) => {
+            
+            console.log("got further, in then beyond sentiment get")
+
+            resolve(res);
+
+        }).catch((err) => {
+            console.error(err);
+            reject(err);
+        })       
+    })
+}
+
+function prettyPrintSentiment(sentimentResponse){
+    
+    console.log();
+    console.log(' ==================== SENTENCE FRAGMENTS ==================== ')
+    console.log();
+
+    for(let mes in sentimentResponse.data.messages) {
+        
+        console.log(' ==================== NEW FRAGMENT ==================== ')
+        console.log();
+
+        console.log(`\t ${ sentimentResponse.data.messages[mes].text }`);
+        console.log(`\t\t\t Sentiment: ${sentimentResponse.data.messages[mes].sentiment.suggested}`);
+        
+        console.log();
+        
+    }
+
+    console.log();
+    console.log(' ==================== END SENTENCE FRAGMENTS ==================== ')
+    console.log();
+
+}
     
 // Webhook endpoint that takes in all Telnyx responses
 expressApp.post(`/${incomingTelnyxWebhookEndpoint}`, (req, res) => {
@@ -154,29 +210,31 @@ expressApp.post(`/${incomingTelnyxWebhookEndpoint}`, (req, res) => {
 
     console.log(`Creating job from SMS: ${req.body.data.payload.text}`)
 
+    let symblConversationId = null;
+
     // Otherwise:
     createSymblJobFromSmsBody(req.body)
-    .then((response) => {
+    .then((resData) => {
             
-        let symblConversationId = response.values[0];
-        let symblJobId = response.values[1];
+        symblConversationId = resData.conversationId;
+        let symblJobId = resData.jobId;
 
         console.log(`Job created from SMS body, conversation ID: ${ symblConversationId } and jobId: ${ symblJobId }`);           
 
-    }).catch((err) => console.error(err));    
+        return waitForJobCompletion(symblJobId);
+        
+    }).then(() => {
+        
+        // Job has finished
+        return getSymblSentiment(symblConversationId);
 
-    // Send response
+    })
+    .then((res) => 
 
-})
+        prettyPrintSentiment(res)
 
-// Webhook endpoint that takes in all Symbl job updates
-expressApp.post(`/symblJobUpdatesWebhook44`, (req, res) => {
-    
-    console.log(req.body);
-
-    if (req.body.status === 'completed'){
-        console.log ("Run job sentiment get here")
-    }
+    )
+    .catch((err) => console.error(err));    
 
 })
 
