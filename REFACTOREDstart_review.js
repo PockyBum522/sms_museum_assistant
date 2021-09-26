@@ -88,7 +88,7 @@ function createSymblJobFromSmsBody(smsReqBody){
                 "messages": [
                     {
                         "payload": {
-                            "content": req.body.data.payload.text,
+                            "content": smsReqBody.data.payload.text,
                             "contentType": "text/plain"
                         }
                     }
