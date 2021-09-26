@@ -3,10 +3,6 @@ require('dotenv').config();
 const telnyxApiKey = process.env.TELNYX_API_KEY
 const symblAccessToken = process.env.SYMBL_API_KEY
 
-console.log("API DATAA")
-console.log(telnyxApiKey)
-console.log(symblAccessToken)
-
 const express = require('express')
 const axios = require('axios')
 const telnyx = require('telnyx')(telnyxApiKey);
@@ -152,14 +148,10 @@ function getSymblSentiment(symblConversationId) {
 // Webhook endpoint that takes in all Telnyx responses
 expressApp.post(`/${incomingTelnyxWebhookEndpoint}`, (req, res) => {
     
-    console.log(`Some incoming data from Telnyx`);           
-
     if(!isIncomingMessage(req.body) || messagePreviouslyReceived(req.body)) {
         
         return;
     }
-
-    console.log("...was incoming message, creating job")
 
     console.log(`Creating job from SMS: ${req.body.data.payload.text}`)
 
