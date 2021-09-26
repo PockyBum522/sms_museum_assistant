@@ -118,10 +118,10 @@ function createSymblJobFromSmsBody(smsReqBody){
     })
 }
 
-function makeSymblSentimentRequest(symblConversationId) {
+function makeSymblSentimentRequest(symblConversationId, symblJobId) {
     
     return new Promise(() => {
-        const finished = checkIfSymblJobIsCompleted();
+        const finished = checkIfSymblJobIsCompleted(symblJobId);
 
         if(finished) {
             axios.get(`https://api.symbl.ai/v1/conversations/${symblConversationId}/messages?sentiment=true`, { headers: symblRequestHeaders})
@@ -134,7 +134,7 @@ function makeSymblSentimentRequest(symblConversationId) {
     })
 }
 
-function checkIfSymblJobIsCompleted() {
+function checkIfSymblJobIsCompleted(symblJobId) {
 
     return new Promise(() => {
     
@@ -178,7 +178,7 @@ expressApp.post(`/${incomingWebhookEndpoint}`, (req, res) => {
             
             console.log(`Promise fulfilled, conversationId: ${conversationId} and jobId on the other side is ${jobId}`)
 
-            makeSymblSentimentRequest(conversationId)
+            makeSymblSentimentRequest(symblConversationId, symblJobId)
             .then(() => {
          
                 console.log("Sentiment req finished. ")
