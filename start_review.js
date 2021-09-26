@@ -99,10 +99,15 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
         })
         .then((res) => {
             
-            let test = await axios.get(`https://api.symbl.ai/v1/job/${res.data.jobId}`, {
-                headers: headers
-            })
-            console.log(test);
+            const loop = async result => {
+                let result = null;
+                while(result !== 'completed') {
+                    console.log(result);
+                    result = await axios.get(`https://api.symbl.ai/v1/job/${res.data.jobId}`, { headers: headers });
+                    setTimeout(200);
+                }
+                console.log(result);
+            }
 
             // while (test != 'complete'){
             //     test = axios.get(`https://api.symbl.ai/v1/job/${res.data.jobId}`, {
