@@ -91,7 +91,7 @@ const symblRequestHeaders = {
 let symblConversationId = null;
 let symblJobId = null;
 
-function createSymblJobFromSmsBody(smsReqBody){
+function createSymblJobFromSmsBody(){
 
     return new Promise(
         (resolve, reject) => {
