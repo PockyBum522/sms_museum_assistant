@@ -110,10 +110,12 @@ function createSymblJobFromSmsBody(smsResponseBody){
             })
             .then((res) => {
 
-                let symblConversationId = res.data.conversationId;
-                let symblJobId = res.data.jobId;
+                const symblConversationId = res.data.conversationId;
+                const symblJobId = res.data.jobId;
 
-                resolve(symblConversationId, symblJobId);
+                console.log(` ${symblConversationId}  ${symblJobId}`)
+
+                return resolve([symblConversationId, symblJobId]);
 
             }).catch((err) => {
                 
