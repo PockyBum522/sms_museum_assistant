@@ -134,7 +134,11 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
         
                 console.log("do something with the sentiment");
         
-                console.log(res);
+                for(let mes in body.messages) {
+                    console.log(body.messages[mes].text);
+                    console.log(body.messages[mes].sentiment.suggested);
+                    console.log("_-_-_-_-_-_-");
+                }
         
             }).catch((err) => {
                 console.error(err);
