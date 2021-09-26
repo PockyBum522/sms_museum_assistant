@@ -64,8 +64,8 @@ function messagePreviouslyReceived(reqBody) {
 }
 
 app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
-    const conversationId = null;
-    const jobId = null;
+    let conversationId = null;
+    let jobId = null;
 
     // Validate message
     if(!isIncomingMessage(req.body) || messagePreviouslyReceived(req.body)) {
