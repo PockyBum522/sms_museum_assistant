@@ -93,8 +93,10 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
     .then((res) => {
         const conversationId = res.data.conversationId;
         console.log(conversationId);
+        console.log(res.data.jobId);
         axios.post(`https://api.symbl.ai/v1/job/${res.data.jobId}`)
         .then((res) => {
+            console.log(res);
             axios.post(`https://api.symbl.ai/v1/conversations/${conversationId}`)
             .then((res) => {
                 console.log(res);
