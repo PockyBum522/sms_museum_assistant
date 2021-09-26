@@ -98,15 +98,15 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
             headers: headers
         })
         .then((res) => {
-            console.log(res);
-            axios.get(`https://api.symbl.ai/v1/conversations/${conversationId}/messages?sentiment=true`)
-            .then((res) => {
-                console.log(res.data.status);
-                // if(res.data.status === 'completed') {
-                // }
-            }).catch((err) => {
-                // console.error(err);
-            })
+            console.log(res.data.status);
+            // console.log(res);
+            // axios.get(`https://api.symbl.ai/v1/conversations/${conversationId}/messages?sentiment=true`)
+            // .then((res) => {
+            //     // if(res.data.status === 'completed') {
+            //     // }
+            // }).catch((err) => {
+            //     // console.error(err);
+            // })
         }).catch((err) => {
             console.error(err);
         })
