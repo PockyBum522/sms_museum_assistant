@@ -88,12 +88,17 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
         })
       };
 
-    const sendUserReview = new Request('https://api.symbl.ai/v1/process/text', options);
-
-    fetch(sendUserReview).then((res) => {
-        console.log(`statusCode: ${res.statusCode}`);
-        console.log(`Body: ${res.body}`);
+    // const sendUserReview = new Request('', options);
+    axios.post('https://api.symbl.ai/v1/process/text', options)
+    .then((res) => {
+        console.log(res);
+    }).catch((err) => {
+        console.error(err);
     })
+    // fetch('https://api.symbl.ai/v1/process/text').then((res) => {
+    //     console.log(`statusCode: ${res.statusCode}`);
+    //     console.log(`Body: ${res.body}`);
+    // })
     
     // Sending off user text for evaluation
     // function sendUserResponseForEvaluation() { 
