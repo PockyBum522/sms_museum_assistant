@@ -94,11 +94,11 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
         const conversationId = res.data.conversationId;
         console.log(conversationId);
         console.log(res.data.jobId);
-        return axios.get(`https://api.symbl.ai/v1/job/${res.data.jobId}`, {
+        axios.get(`https://api.symbl.ai/v1/job/${res.data.jobId}`, {
             headers: headers
         })
         .then((res) => {
-            
+            console.log('starting into loop');
             const loop = async testLoop => {
                 let result = null;
                 while(result !== 'completed') {
