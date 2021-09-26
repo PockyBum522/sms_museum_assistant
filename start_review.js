@@ -110,27 +110,23 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
             }
             loop();
 
-            // while (test != 'complete'){
-            //     test = axios.get(`https://api.symbl.ai/v1/job/${res.data.jobId}`, {
-            //         headers: headers
-            //     })
-            // }
-
-            // Happy path
-
-
-
-            // axios.get(`https://api.symbl.ai/v1/conversations/${conversationId}/messages?sentiment=true`)
-            // .then((res) => {
-            // }).catch((err) => {
-            //     // console.error(err);
-            // })
+            axios.get(`https://api.symbl.ai/v1/conversations/${conversationId}/messages?sentiment=true`)
+            .then((res) => {
+                console.log("do something with the sentiment");
+                console.log(res);
+            }).catch((err) => {
+                console.error(err);
+            })
         }).catch((err) => {
             console.error(err);
         })
     }).catch((err) => {
         console.error(err);
     })
+
+
+
+
     // fetch('https://api.symbl.ai/v1/process/text').then((res) => {
     //     console.log(`statusCode: ${res.statusCode}`);
     //     console.log(`Body: ${res.body}`);
