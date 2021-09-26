@@ -64,8 +64,8 @@ function messagePreviouslyReceived(reqBody) {
 }
 
 app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
-    const conversationId = res.data.conversationId;
-    const jobId = res.data.jobId;
+    const conversationId = null;
+    const jobId = null;
 
     // Validate message
     if(!isIncomingMessage(req.body) || messagePreviouslyReceived(req.body)) {
@@ -93,10 +93,11 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
         headers: headers
     })
     .then((res) => {
-        
+        conversationId = res.data.conversationId;
+        jobId = res.data.jobId;
         console.log(conversationId);
-        console.log(jobId);
-        axios.get(`https://api.symbl.ai/v1/job/${jobId}`, {
+        console.log(res.data.jobId);
+        axios.get(`https://api.symbl.ai/v1/job/${res.data.jobId}`, {
             headers: headers
         })
         .then((res) => {
@@ -112,7 +113,7 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
     async function checkIfCompleted() {
         console.log('starting into loop');
 
-        const loop = async testLoop => {
+        const loop = testLoop => {
             do {
                 var result = await axios.get(`https://api.symbl.ai/v1/job/${jobId}`, { headers: headers }).catch((err) => {console.error(err)});
                 console.log(`Status: ${result.data.status}`);
