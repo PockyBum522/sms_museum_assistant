@@ -142,7 +142,7 @@ function makeSymblSentimentRequest(symblConversationId, symblJobId) {
 
 function checkIfSymblJobIsCompleted(symblJobId) {
 
-    return new Promise(() => {
+    return new Promise((resolve, reject) => {
     
         console.log('stassdfsfdfasfdfdsfasdrting into loop');
 
@@ -165,7 +165,9 @@ function checkIfSymblJobIsCompleted(symblJobId) {
         // }
         // loop();
 
-        return;
+        resolve();
+
+        reject();
 
     })
 }
