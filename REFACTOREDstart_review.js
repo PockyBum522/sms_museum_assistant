@@ -35,6 +35,15 @@ expressApp.use(bodyParser.json(bodyParserOptions));
 // MAIN CALL
 startUserReviewProcess();
 
+createSymblJobFromSmsBody(req.body)
+    .then(
+        () => {
+            
+            console.log(`Job created from SMS body, conversation ID: ${ symblConversationId } and jobId: ${ symblJobId }`);           
+
+        }).catch((err) => console.error(err));    
+
+
 // Validation logic
 function isIncomingMessage(reqBody) {
     return reqBody.data.event_type === "message.received";
@@ -53,24 +62,24 @@ function messagePreviouslyReceived(reqBody) {
 
 // Main function, the endpoint below is called by Telnyx on message response
 function startUserReviewProcess(){
-    telnyx.messages
-        .create(
-        {
-            'from': '+12182203711', // Your Telnyx number
-            'to': formattedPhoneNumber,
-            'text': reviewPromptText
-        })
-        .then(() => {
+    // telnyx.messages
+    //     .create(
+    //     {
+    //         'from': '+12182203711', // Your Telnyx number
+    //         'to': formattedPhoneNumber,
+    //         'text': reviewPromptText
+    //     })
+    //     .then(() => {
 
-            console.log(`Review message sent for: ${ formattedPhoneNumber }`)
-            console.log(`Now listening for response on: /${incomingTelnyxWebhookEndpoint}`)
+    //         console.log(`Review message sent for: ${ formattedPhoneNumber }`)
+    //         console.log(`Now listening for response on: /${incomingTelnyxWebhookEndpoint}`)
 
-        })
-        .catch(
-            (err) => {
-                console.error(err)
-            }
-        );
+    //     })
+    //     .catch(
+    //         (err) => {
+    //             console.error(err)
+    //         }
+    //     );
 };
 
 // Symbl workers
@@ -91,7 +100,8 @@ function createSymblJobFromSmsBody(smsReqBody){
                 "messages": [
                     {
                         "payload": {
-                            "content": smsReqBody.data.payload.text,
+                            //"content": smsReqBody.data.payload.text,
+                            "content": "teeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeest",
                             "contentType": "text/plain"
                         }
                     }
@@ -142,23 +152,23 @@ function getSymblSentiment() {
 // Webhook endpoint that takes in all Telnyx responses
 expressApp.post(`/${incomingTelnyxWebhookEndpoint}`, (req, res) => {
     
-    console.log(`Some incoming nonsense from Telnyx`);           
+    // console.log(`Some incoming nonsense from Telnyx`);           
 
-    if(!isIncomingMessage(req.body) || messagePreviouslyReceived(req.body)) {
+    // if(!isIncomingMessage(req.body) || messagePreviouslyReceived(req.body)) {
         
-        return;
-    }
+    //     return;
+    // }
 
-    console.log("...was incoming message, creating job")
+    // console.log("...was incoming message, creating job")
 
-    // Otherwise:
-    createSymblJobFromSmsBody(req.body)
-    .then(
-        () => {
+    // // Otherwise:
+    // createSymblJobFromSmsBody(req.body)
+    // .then(
+    //     () => {
             
-            console.log(`Job created from SMS body, conversation ID: ${ symblConversationId } and jobId: ${ symblJobId }`);           
+    //         console.log(`Job created from SMS body, conversation ID: ${ symblConversationId } and jobId: ${ symblJobId }`);           
 
-        }).catch((err) => console.error(err));    
+    //     }).catch((err) => console.error(err));    
 
     // Send response
 
