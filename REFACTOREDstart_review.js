@@ -149,7 +149,8 @@ function blockUntilSymblJobIsCompleted(symblJobId) {
 
         do {
 
-            isSymblJobComplete().then((res) => (resultData = res))
+            console.log(`looooop`)
+            isSymblJobComplete().then((res) => (resultData = res)).catch((err) => { console.log(err); reject(err); })
 
         } while(resultData.data.status !== 'completed')
 
@@ -168,11 +169,11 @@ function isSymblJobComplete(){
         let resultData = {data: {status: {}}};
 
         // Check job status until status is completed, lazy, but this is demo
-        axios.get(`https://api.symbl.ai/v1/job/${symblJobId}`, { headers: symblRequestHeaders })
+        await axios.get(`https://api.symbl.ai/v1/job/${symblJobId}`, { headers: symblRequestHeaders })
         .then(
             (result) => {
 
-                setTimeout(() => {}, 200);
+                await setTimeout(() => {}, 200);
 
                 console.log(`Status: ${result.data.status}`)
                 resolve(result)
