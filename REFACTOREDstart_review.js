@@ -118,20 +118,21 @@ function createSymblJobFromSmsBody(smsReqBody){
     })
 }
 
-// async function makeSymblSentimentRequest() {
+function makeSymblSentimentRequest(symblConversationId) {
+    
+    return new Promise(() => {
+        const finished = await checkIfSymblJobIsCompleted();
 
-//     const finished = await checkIfSymblJobIsCompleted();
-
-//     if(finished) {
-//         axios.get(`https://api.symbl.ai/v1/conversations/${symblConversationId}/messages?sentiment=true`, { headers: symblRequestHeaders})
-//         .then((res) => {
-//             console.log("do something with the sentiment");
-//             console.log(res);
-//         }).catch((err) => {
-//             console.error(err);
-//         });
-//     }
-// }
+        if(finished) {
+            axios.get(`https://api.symbl.ai/v1/conversations/${symblConversationId}/messages?sentiment=true`, { headers: symblRequestHeaders})
+            .then((res) => {
+                return;
+            }).catch((err) => {
+                console.error(err);
+            });
+        }
+    })
+}
 
 // async function checkIfSymblJobIsCompleted() {
 
@@ -170,7 +171,16 @@ expressApp.post(`/${incomingWebhookEndpoint}`, (req, res) => {
     // Otherwise:
     createSymblJobFromSmsBody(req.body)
     .then(
-        (conversationId, jobId) => console.log(`Promise fulfilled, conversationId: ${conversationId} and jobId on the other side is ${jobId}`)
+        (conversationId, jobId) => {
+            
+            console.log(`Promise fulfilled, conversationId: ${conversationId} and jobId on the other side is ${jobId}`)
+
+            makeSymblSentimentRequest(conversationId)
+            .then(() => {
+                console.log("Sentiment req finished. ")
+            })
+
+        }
         //makeSymblSentimentRequest(symblConversationId)
     );    
 
