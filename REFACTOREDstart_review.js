@@ -122,7 +122,7 @@ function getSymblSentiment(symblConversationId, symblJobId) {
     
     return new Promise((resolve, reject) => {
 
-        checkIfSymblJobIsCompleted(symblJobId)
+        blockUntilSymblJobIsCompleted(symblJobId)
         .then(() =>{
 
             console.log('Requesting sentiment GET now');
@@ -141,29 +141,15 @@ function getSymblSentiment(symblConversationId, symblJobId) {
     })
 }
 
-function checkIfSymblJobIsCompleted(symblJobId) {
+function blockUntilSymblJobIsCompleted(symblJobId) {
 
     return new Promise((resolve, reject) => {
-    
+
         let resultData = {data: {status: {}}};
 
         do {
 
-            console.log("entering looooop, brooother")
-
-            // Check job status until status is completed, lazy, but this is demo
-            axios.get(`https://api.symbl.ai/v1/job/${symblJobId}`, { headers: symblRequestHeaders })
-                .then(
-                    (result) => {
-
-                        console.log("got to result stuff")
-                        resultData = result
-                        console.log(`Status: ${resultData.data.status}`)
-                    })
-                .catch(
-                    (err) => {console.error(err); reject(err); });
-                
-            setTimeout(() => {}, 200);
+            isSymblJobComplete().then((res) => (resultData = res))
 
         } while(resultData.data.status !== 'completed')
 
@@ -175,6 +161,30 @@ function checkIfSymblJobIsCompleted(symblJobId) {
     })
 }
 
+function isSymblJobComplete(){
+
+    return new Promise((resolve, reject) => {
+
+        let resultData = {data: {status: {}}};
+
+        // Check job status until status is completed, lazy, but this is demo
+        axios.get(`https://api.symbl.ai/v1/job/${symblJobId}`, { headers: symblRequestHeaders })
+        .then(
+            (result) => {
+
+                setTimeout(() => {}, 200);
+
+                console.log(`Status: ${result.data.status}`)
+                resolve(result)
+                
+            })
+        .catch(
+            (err) => {console.error(err); reject(err); });
+
+    })
+}
+
+    
 // Webhook endpoint that takes in all Telnyx responses
 expressApp.post(`/${incomingWebhookEndpoint}`, (req, res) => {
     
