@@ -149,42 +149,32 @@ function blockUntilSymblJobIsCompleted(symblJobId) {
 
         do {
 
-            console.log(`looooop`)
-            isSymblJobComplete().then((res) => (resultData = res)).catch((err) => { console.log(err); reject(err); })
+            console.log(`looooop ${symblJobId}`)
+            
+            // Check job status until status is completed, lazy, but this is demo
+            axios.get(`https://api.symbl.ai/v1/job/${symblJobId}`, { headers: symblRequestHeaders })
+            .then(
+                (result) => {
+
+                    setTimeout(() => {}, 200);
+
+                    console.log(`Status: ${result.data.status}`)
+                                            
+                })
+            .catch(
+                (err) => {console.error(err); reject(err); });
+
+            
 
         } while(resultData.data.status !== 'completed')
 
         // Job has completed now!
         console.log("got past while loop");
         
-        resolve();
+        resolve(resultData);
 
     })
 }
-
-function isSymblJobComplete(){
-
-    return new Promise((resolve, reject) => {
-
-        let resultData = {data: {status: {}}};
-
-        // Check job status until status is completed, lazy, but this is demo
-        await axios.get(`https://api.symbl.ai/v1/job/${symblJobId}`, { headers: symblRequestHeaders })
-        .then(
-            (result) => {
-
-                await setTimeout(() => {}, 200);
-
-                console.log(`Status: ${result.data.status}`)
-                resolve(result)
-                
-            })
-        .catch(
-            (err) => {console.error(err); reject(err); });
-
-    })
-}
-
     
 // Webhook endpoint that takes in all Telnyx responses
 expressApp.post(`/${incomingWebhookEndpoint}`, (req, res) => {
