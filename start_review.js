@@ -72,7 +72,6 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
 
     const options = {
         'method': 'POST',
-        'url': 'https://api.symbl.ai/v1/process/text',
         'headers': {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${accessToken}`
@@ -89,18 +88,28 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
         })
       };
 
+    const sendUserReview = new Request('https://api.symbl.ai/v1/process/text', options);
+
+    fetch(sendUserReview).then((res) => {
+        console.log(`statusCode: ${res.statusCode}`);
+        console.log(`Body: ${res.body}`);
+    })
+    
     // Sending off user text for evaluation
-    Promise.await(request(options, function (err, response) {
-        const statusCode = response.statusCode;
-        if (err || Object.keys(responses).indexOf(statusCode.toString()) !== -1) {
-          throw new Error(responses[statusCode]);
-        }
-        console.log('Status code: ', statusCode);
-        console.log('Body', response.body);
-      })).then(() => {
-          console.log("is this even allowed");
-      });
-    // Send response
+    // function sendUserResponseForEvaluation() { 
+    //     request(options, function (err, response) {
+    //         const statusCode = response.statusCode;
+    //         if (err || Object.keys(responses).indexOf(statusCode.toString()) !== -1) {
+    //             throw new Error(responses[statusCode]);
+    //         }
+    //         console.log('Status code: ', statusCode);
+    //         console.log('Body', response.body);
+    //     });    
+    // }
+
+    // const resPromise = new Promise(sendUserResponseForEvaluation);
+
+      // Send response
 
 })
 
