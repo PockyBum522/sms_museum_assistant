@@ -99,7 +99,11 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
                 console.log(res);
                 // if(res.status === 'completed') {
                 // }
+            }).catch((err) => {
+                console.error(err);
             })
+        }).catch((err) => {
+            console.error(err);
         })
     }).catch((err) => {
         console.error(err);
