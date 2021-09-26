@@ -17,7 +17,7 @@ const responses = {
     500: 'Something went wrong! Please contact support@symbl.ai'
 }  
 
-const incomingWebhookEndpoint = 'onIncoming/session136';
+const incomingTelnyxWebhookEndpoint = 'onIncoming/session136';
 
 const reviewPromptText = "We hope you had a great time at the museum! Please respond with a detailed review of your visit.";
 let formattedPhoneNumber = `+14074632925`;
@@ -63,7 +63,7 @@ function startUserReviewProcess(){
         .then(() => {
 
             console.log(`Review message sent for: ${ formattedPhoneNumber }`)
-            console.log(`Now listening for response on: /${incomingWebhookEndpoint}`)
+            console.log(`Now listening for response on: /${incomingTelnyxWebhookEndpoint}`)
 
         })
         .catch(
@@ -79,12 +79,16 @@ const symblRequestHeaders = {
     'Authorization': `Bearer ${symblAccessToken}`
 };
 
-async function createSymblJobFromSmsBody(smsReqBody){
+let symblConversationId = null;
+let symblJobId = null;
+
+function createSymblJobFromSmsBody(smsReqBody){
 
     return new Promise(
         (resolve, reject) => {
         
             const symblSmsSubmitRequestJson = {
+                "webhookUrl" : "",
                 "messages": [
                     {
                         "payload": {
@@ -102,8 +106,8 @@ async function createSymblJobFromSmsBody(smsReqBody){
             })
             .then((res) => {
 
-                let symblConversationId = res.data.conversationId;
-                let symblJobId = res.data.jobId;
+                symblConversationId = res.data.conversationId;
+                symblJobId = res.data.jobId;
 
                 console.log(`Returning conversation ID: ${ symblConversationId } and jobId: ${ symblJobId }`);
             
@@ -118,52 +122,27 @@ async function createSymblJobFromSmsBody(smsReqBody){
     })
 }
 
-async function getSymblSentiment(conversationId, symblJobId) {
+function getSymblSentiment(symblConversationId, symblJobId) {
     
     return new Promise((resolve, reject) => {
 
-            const finished = await checkIfCompleted(symblJobId);
-           
-            if(finished) {
+        console.log('Requesting sentiment GET now');
 
-                axios.get(`https://api.symbl.ai/v1/conversations/${conversationId}/messages?sentiment=true`, { headers: headers})
-                .then((res) => {
-                    
-                    console.log("do something with the sentiment");
-                    console.log(res);
-                    resolve(res);
+        axios.get(`https://api.symbl.ai/v1/conversations/${symblConversationId}/messages?sentiment=true`, { headers: symblRequestHeaders})
+        .then((res) => {
+            
+            console.log("got further, in then beyond sentiment get")
+            resolve(res);
 
-                }).catch((err) => { console.error(err); reject(err);  });
-            }
-        })
-}
-
-
-async function checkIfCompleted(jobId) {
-    console.log('starting into loop');
-
-    let result = {data: {status: {}}};
-    const loop = async testLoop => {
-
-        do {
-
-            result = await axios.get(`https://api.symbl.ai/v1/job/${jobId}`, { headers: headers }).catch((err) => {console.error(err)});
-            console.log(`Status: ${result.data.status}`);
-            setTimeout(() => {}, 200);
-
-        } while(result.data.status !== 'completed')
-
-        console.log("got past while loop");
-
-        return result.data.status;
-    }
-    loop();
-
-    return result.data.status;
+        }).catch((err) => {
+            console.error(err);
+            reject(err);
+        })       
+    })
 }
     
 // Webhook endpoint that takes in all Telnyx responses
-expressApp.post(`/${incomingWebhookEndpoint}`, (req, res) => {
+expressApp.post(`/${incomingTelnyxWebhookEndpoint}`, (req, res) => {
     
     if(!isIncomingMessage(req.body) || messagePreviouslyReceived(req.body)) {
         return;
@@ -174,21 +153,21 @@ expressApp.post(`/${incomingWebhookEndpoint}`, (req, res) => {
     .then(
         (returnData) => {
 
-            let conversationId = returnData[0]
-            let jobId = returnData[1]
+            symblConversationId = returnData[0]
+            symblJobId = returnData[1]
 
             console.log(`Promise fulfilled, conversationId: ${conversationId} and jobId on the other side is ${jobId}`)
-
-            getSymblSentiment(conversationId, jobId)
-            .then((res) => {
-         
-                console.log("Sentiment req finished. ");
-                console.log(`res: ${res}`);
-
-            })
         });    
 
     // Send response
+
+})
+
+// Webhook endpoint that takes in all Symbl job updates
+expressApp.post(`/symblJobUpdatesWebhook`, (req, res) => {
+    
+    console.log("=======================================================================");
+    console.log(req.body);
 
 })
 
