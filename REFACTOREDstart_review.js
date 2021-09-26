@@ -96,7 +96,7 @@ function createSymblJobFromSmsBody(smsReqBody){
                         }
                     }
                 ],
-                "webhookUrl" : "http://pockybum522.com/symblJobUpdatesWebhook"
+                "webhookUrl" : "http:\/\/pockybum522.com\/symblJobUpdatesWebhook"
             };
             
             console.log('First');
