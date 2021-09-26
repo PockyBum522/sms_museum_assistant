@@ -99,7 +99,7 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
         })
         .then((res) => {
             
-            const loop = async result => {
+            const loop = async testLoop => {
                 let result = null;
                 while(result !== 'completed') {
                     console.log(result);
