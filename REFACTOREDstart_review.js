@@ -87,36 +87,36 @@ function createSymblJobFromSmsBody(smsReqBody){
     return new Promise(
         (resolve, reject) => {
            
-            // const symblSmsSubmitRequestJson = {
-            //     "messages": [
-            //         {
-            //             "payload": {
-            //                 "content": smsReqBody.data.payload.text,
-            //                 "contentType": "text/plain"
-            //             }
-            //         }
-            //     ],
-            //     "webhookUrl" : "http://pockybum522.com/symblJobUpdatesWebhook1"
-            // };
+            const symblSmsSubmitRequestJson = {
+                "messages": [
+                    {
+                        "payload": {
+                            "content": smsReqBody.data.payload.text,
+                            "contentType": "text/plain"
+                        }
+                    }
+                ],
+                "webhookUrl" : "http://pockybum522.com/symblJobUpdatesWebhook1"
+            };
             
-            // console.log('First');
+            console.log('First');
 
-            // axios.post('https://api.symbl.ai/v1/process/text', symblSmsSubmitRequestJson, {
-            //     headers: symblRequestHeaders
-            // })
-            // .then((res) => {
+            axios.post('https://api.symbl.ai/v1/process/text', symblSmsSubmitRequestJson, {
+                headers: symblRequestHeaders
+            })
+            .then((res) => {
 
-            //     symblConversationId = res.data.conversationId;
-            //     symblJobId = res.data.jobId;
+                symblConversationId = res.data.conversationId;
+                symblJobId = res.data.jobId;
             
-            //     resolve();
+                resolve();
 
-            // }).catch((err) => {
+            }).catch((err) => {
                 
-            //     console.error(err);
-            //     reject(err);
+                console.error(err);
+                reject(err);
 
-            // })        
+            })        
     })
 }
 
@@ -172,6 +172,15 @@ expressApp.post(`/symblJobUpdatesWebhook2`, (req, res) => {
     if (req.body.status === 'completed'){
         console.log ("Run job sentiment get here")
     }
+
+})
+
+// Webhook endpoint that takes in all Symbl job updates
+expressApp.post(`/symblJobUpdatesWebhook1`, (req, res) => {
+    
+    console.log("webhook1:");
+    console.log(req.body);
+
 
 })
 
