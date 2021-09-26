@@ -22,7 +22,7 @@ const incomingWebhookEndpoint = 'onIncoming/session136';
 const reviewPromptText = "We hope you had a great time at the museum! Please respond with a detailed review of your visit.";
 let formattedPhoneNumber = `+14074632925`;
 
-let lastTenReceivedIDsArray = [];
+let lastTenReceivedMessageIDsArray = [];
 
 var bodyParserOptions = {
     inflate: true,
@@ -41,34 +41,36 @@ function isIncomingMessage(reqBody) {
 }
 
 function messagePreviouslyReceived(reqBody) {
-    if(lastTenReceivedIDsArray.includes(reqBody.data.id)) {
+
+    if(lastTenReceivedMessageIDsArray.includes(reqBody.data.id)) {
         return true;
     }
 
-    lastTenReceivedIDsArray.push(reqBody.data.id);
+    lastTenReceivedMessageIDsArray.push(reqBody.data.id);
+
     return false;
 }
 
 // Main function, the endpoint below is called by Telnyx on message response
 function startUserReviewProcess(){
     telnyx.messages
-    .create(
-    {
-        'from': '+12182203711', // Your Telnyx number
-        'to': formattedPhoneNumber,
-        'text': reviewPromptText
-    })
-    .then(() => {
+        .create(
+        {
+            'from': '+12182203711', // Your Telnyx number
+            'to': formattedPhoneNumber,
+            'text': reviewPromptText
+        })
+        .then(() => {
 
-        console.log(`Review message sent for: ${ formattedPhoneNumber }`)
-        console.log(`Now listening for response on: /${incomingWebhookEndpoint}`)
-        
-    })
-    .catch(
-        (err) => {
-            console.error(err)
-        }
-    );
+            console.log(`Review message sent for: ${ formattedPhoneNumber }`)
+            console.log(`Now listening for response on: /${incomingWebhookEndpoint}`)
+
+        })
+        .catch(
+            (err) => {
+                console.error(err)
+            }
+        );
 };
 
 // Symbl workers
@@ -85,8 +87,8 @@ async function createSymblJobWithSmsBody(reqBody){
         "messages": [
         {
             "payload": {
-            "content": req.body.data.payload.text,
-            "contentType": "text/plain"
+                "content": req.body.data.payload.text,
+                "contentType": "text/plain"
             }
         }
         ]
@@ -108,6 +110,7 @@ async function createSymblJobWithSmsBody(reqBody){
         })
         .then((res) => {
             
+            console.log(`Returning convId123: ${ symblConversationId }`)
             return symblConversationId; // Real return
 
         }).catch((err) => {
@@ -118,47 +121,47 @@ async function createSymblJobWithSmsBody(reqBody){
     });
 }
 
-async function makeSymblSentimentRequest() {
+// async function makeSymblSentimentRequest() {
 
-    const finished = await checkIfSymblJobIsCompleted();
+//     const finished = await checkIfSymblJobIsCompleted();
 
-    if(finished) {
-        axios.get(`https://api.symbl.ai/v1/conversations/${symblConversationId}/messages?sentiment=true`, { headers: symblRequestHeaders})
-        .then((res) => {
-            console.log("do something with the sentiment");
-            console.log(res);
-        }).catch((err) => {
-            console.error(err);
-        });
-    }
-}
+//     if(finished) {
+//         axios.get(`https://api.symbl.ai/v1/conversations/${symblConversationId}/messages?sentiment=true`, { headers: symblRequestHeaders})
+//         .then((res) => {
+//             console.log("do something with the sentiment");
+//             console.log(res);
+//         }).catch((err) => {
+//             console.error(err);
+//         });
+//     }
+// }
 
-async function checkIfSymblJobIsCompleted() {
+// async function checkIfSymblJobIsCompleted() {
 
-    console.log('starting into loop');
+//     console.log('starting into loop');
 
-    let result = {data: {status: {}}};
+//     let result = {data: {status: {}}};
 
-    const loop = async testLoop => {
-        do {
+//     const loop = async testLoop => {
+//         do {
 
-            // Check job status until status is completed, lazy, but this is demo
-            result = await axios.get(`https://api.symbl.ai/v1/job/${symblJobId}`, { headers: symblRequestHeaders }).catch((err) => {console.error(err)});
-            console.log(`Status: ${result.data.status}`);
-            setTimeout(() => {}, 200);
+//             // Check job status until status is completed, lazy, but this is demo
+//             result = await axios.get(`https://api.symbl.ai/v1/job/${symblJobId}`, { headers: symblRequestHeaders }).catch((err) => {console.error(err)});
+//             console.log(`Status: ${result.data.status}`);
+//             setTimeout(() => {}, 200);
 
-        } while(result.data.status !== 'completed')
+//         } while(result.data.status !== 'completed')
 
-        // Job has completed now!
-        console.log("got past while loop");
+//         // Job has completed now!
+//         console.log("got past while loop");
         
-        return;
+//         return;
 
-    }
-    loop();
+//     }
+//     loop();
 
-    return result.data.status;
-}
+//     return result.data.status;
+// }
 
 // Webhook endpoint that takes in all Telnyx responses
 expressApp.post(`/${incomingWebhookEndpoint}`, (req, res) => {
