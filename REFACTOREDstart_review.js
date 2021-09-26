@@ -145,22 +145,24 @@ function checkIfSymblJobIsCompleted(symblJobId) {
 
     return new Promise((resolve, reject) => {
     
-        console.log('stassdfsfdfasfdfdsfasdrting into loop');
-
         let resultData = {data: {status: {}}};
 
         do {
 
+            console.log("entering looooop, brooother")
+
             // Check job status until status is completed, lazy, but this is demo
             axios.get(`https://api.symbl.ai/v1/job/${symblJobId}`, { headers: symblRequestHeaders })
-            .then(
-                (result) => {
-                    resultData = result
-                    console.log(`Status: ${resultData.data.status}`)
-                })
-            .catch(
-                (err) => {console.error(err); reject(err); });
-            
+                .then(
+                    (result) => {
+
+                        console.log("got to result stuff")
+                        resultData = result
+                        console.log(`Status: ${resultData.data.status}`)
+                    })
+                .catch(
+                    (err) => {console.error(err); reject(err); });
+                
             setTimeout(() => {}, 200);
 
         } while(resultData.data.status !== 'completed')
