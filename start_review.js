@@ -91,7 +91,16 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
         headers: headers
     })
     .then((res) => {
-        console.log(res);
+        const conversationId = res.data.conversationId;
+        axios.post(`https://api.symbl.ai/v1/job/${res.data.jobId}`)
+        .then((res) => {
+            axios.post(`https://api.symbl.ai/v1/conversations/${conversationId}`)
+            .then((res) => {
+                console.log(res);
+                // if(res.status === 'completed') {
+                // }
+            })
+        })
     }).catch((err) => {
         console.error(err);
     })
