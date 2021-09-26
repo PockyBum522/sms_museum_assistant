@@ -39,7 +39,6 @@ telnyx.messages
           'text': reviewPromptText
       })
       .then(() => {
-          res.send(`Review message sent for: ${ formattedPhoneNumber }`)
           console.log(`Review message sent for: ${ formattedPhoneNumber }`)
           console.log(`Now listening for response on: /${incomingWebhookEndpoint}`)
       })
