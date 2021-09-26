@@ -1,13 +1,20 @@
+require('dotenv').config();
+
+const telnyxApiKey = process.env.TELNYX_API_KEY
+const symblAccessToken = process.env.SYMBL_API_KEY
+
+console.log("API DATAA")
+console.log(telnyxApiKey)
+console.log(symblAccessToken)
+
 const express = require('express')
 const axios = require('axios')
-const telnyx = require('telnyx')('');
+const telnyx = require('telnyx')(telnyxApiKey);
 const bodyParser = require('body-parser')
 
 // CONFIGURATION
 const expressApp = express()
 const port = 80
-
-const symblAccessToken = '5rZNBQ';
 
 const responses = {
     400: 'Bad Request! Please refer docs for correct input fields.',
