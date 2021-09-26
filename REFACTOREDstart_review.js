@@ -176,10 +176,10 @@ expressApp.post(`/${incomingWebhookEndpoint}`, (req, res) => {
     .then(
         (returnData) => {
             
-            console.log(`Promise fulfilled, conversationId: ${conversationId} and jobId on the other side is ${jobId}`)
-
             let conversationId = returnData[0]
             let jobId = returnData[1]
+
+            console.log(`Promise fulfilled, conversationId: ${conversationId} and jobId on the other side is ${jobId}`)
 
             makeSymblSentimentRequest(conversationId, jobId)
             .then(() => {
