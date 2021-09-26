@@ -108,10 +108,8 @@ function createSymblJobFromSmsBody(smsReqBody){
 
                 symblConversationId = res.data.conversationId;
                 symblJobId = res.data.jobId;
-
-                console.log(`Returning conversation ID: ${ symblConversationId } and jobId: ${ symblJobId }`);
             
-                resolve([symblConversationId, symblJobId])
+                resolve();
 
             }).catch((err) => {
                 
@@ -122,7 +120,7 @@ function createSymblJobFromSmsBody(smsReqBody){
     })
 }
 
-function getSymblSentiment(symblConversationId, symblJobId) {
+function getSymblSentiment() {
     
     return new Promise((resolve, reject) => {
 
@@ -151,12 +149,10 @@ expressApp.post(`/${incomingTelnyxWebhookEndpoint}`, (req, res) => {
     // Otherwise:
     createSymblJobFromSmsBody(req.body)
     .then(
-        (returnData) => {
+        () => {
+            
+            console.log(`Job created from SMS body, conversation ID: ${ symblConversationId } and jobId: ${ symblJobId }`);           
 
-            symblConversationId = returnData[0]
-            symblJobId = returnData[1]
-
-            console.log(`Promise fulfilled, conversationId: ${conversationId} and jobId on the other side is ${jobId}`)
         });    
 
     // Send response
@@ -167,7 +163,11 @@ expressApp.post(`/${incomingTelnyxWebhookEndpoint}`, (req, res) => {
 expressApp.post(`/symblJobUpdatesWebhook`, (req, res) => {
     
     console.log("=======================================================================");
-    console.log(req.body);
+    console.log(req.body.status);
+
+    if (req.body.status === 'completed'){
+        console.log ("Run job sentiment get here")
+    }
 
 })
 
