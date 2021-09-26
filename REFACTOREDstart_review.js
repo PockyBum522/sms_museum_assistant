@@ -118,7 +118,7 @@ async function createSymblJobFromSmsBody(smsReqBody){
     })
 }
 
-function getSymblSentiment(conversationId, symblJobId) {
+async function getSymblSentiment(conversationId, symblJobId) {
     
     return new Promise((resolve, reject) => {
 
