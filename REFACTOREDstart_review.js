@@ -79,7 +79,7 @@ const symblRequestHeaders = {
     'Authorization': `Bearer ${symblAccessToken}`
 };
 
-function createSymblJobFromSmsBody(smsReqBody){
+async function createSymblJobFromSmsBody(smsReqBody){
 
     return new Promise(
         (resolve, reject) => {
@@ -118,62 +118,48 @@ function createSymblJobFromSmsBody(smsReqBody){
     })
 }
 
-function getSymblSentiment(symblConversationId, symblJobId) {
+function getSymblSentiment(conversationId, symblJobId) {
     
     return new Promise((resolve, reject) => {
 
-        blockUntilSymblJobIsCompleted(symblJobId)
-        .then(() =>{
+            const finished = await checkIfCompleted(symblJobId);
+           
+            if(finished) {
 
-            console.log('Requesting sentiment GET now');
+                axios.get(`https://api.symbl.ai/v1/conversations/${conversationId}/messages?sentiment=true`, { headers: headers})
+                .then((res) => {
+                    
+                    console.log("do something with the sentiment");
+                    console.log(res);
+                    resolve(res);
 
-            axios.get(`https://api.symbl.ai/v1/conversations/${symblConversationId}/messages?sentiment=true`, { headers: symblRequestHeaders})
-            .then((res) => {
-                
-                console.log("got further, in then beyond sentiment get")
-                resolve(res);
-
-            }).catch((err) => {
-                console.error(err);
-                reject(err);
-            })
-        })            
-    })
+                }).catch((err) => { console.error(err); reject(err);  });
+            }
+        })
 }
 
-function blockUntilSymblJobIsCompleted(symblJobId) {
 
-    return new Promise((resolve, reject) => {
+async function checkIfCompleted(jobId) {
+    console.log('starting into loop');
 
-        let resultData = {data: {status: {}}};
+    let result = {data: {status: {}}};
+    const loop = async testLoop => {
 
         do {
 
-            console.log(`looooop ${symblJobId}`)
-            
-            // Check job status until status is completed, lazy, but this is demo
-            axios.get(`https://api.symbl.ai/v1/job/${symblJobId}`, { headers: symblRequestHeaders })
-            .then(
-                (result) => {
+            result = await axios.get(`https://api.symbl.ai/v1/job/${jobId}`, { headers: headers }).catch((err) => {console.error(err)});
+            console.log(`Status: ${result.data.status}`);
+            setTimeout(() => {}, 200);
 
-                    setTimeout(() => {}, 200);
+        } while(result.data.status !== 'completed')
 
-                    console.log(`Status: ${result.data.status}`)
-                                            
-                })
-            .catch(
-                (err) => {console.error(err); reject(err); });
-
-            
-
-        } while(resultData.data.status !== 'completed')
-
-        // Job has completed now!
         console.log("got past while loop");
-        
-        resolve(resultData);
 
-    })
+        return result.data.status;
+    }
+    loop();
+
+    return result.data.status;
 }
     
 // Webhook endpoint that takes in all Telnyx responses
