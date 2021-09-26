@@ -130,6 +130,7 @@ function makeSymblSentimentRequest(symblConversationId, symblJobId) {
             axios.get(`https://api.symbl.ai/v1/conversations/${symblConversationId}/messages?sentiment=true`, { headers: symblRequestHeaders})
             .then((res) => {
                 
+                console.log("got further, in then beyond sentiment get")
                 return;
 
             }).catch((err) => {
@@ -143,29 +144,29 @@ function checkIfSymblJobIsCompleted(symblJobId) {
 
     return new Promise(() => {
     
-        console.log('starting into loop');
+        console.log('stassdfsfdfasfdfdsfasdrting into loop');
 
-        let result = {data: {status: {}}};
+        // let result = {data: {status: {}}};
 
-        const loop = async testLoop => {
-            do {
+        //     do {
 
-                // Check job status until status is completed, lazy, but this is demo
-                result = await axios.get(`https://api.symbl.ai/v1/job/${symblJobId}`, { headers: symblRequestHeaders }).catch((err) => {console.error(err)});
-                console.log(`Status: ${result.data.status}`);
-                setTimeout(() => {}, 200);
+        //         // Check job status until status is completed, lazy, but this is demo
+        //         result = axios.get(`https://api.symbl.ai/v1/job/${symblJobId}`, { headers: symblRequestHeaders }).catch((err) => {console.error(err)});
+        //         console.log(`Status: ${result.data.status}`);
+        //         setTimeout(() => {}, 200);
 
-            } while(result.data.status !== 'completed')
+        //     } while(result.data.status !== 'completed')
 
-            // Job has completed now!
-            console.log("got past while loop");
+        //     // Job has completed now!
+        //     console.log("got past while loop");
             
-            return;
+        //     return;
 
-        }
-        loop();
+        // }
+        // loop();
 
         return;
+
     })
 }
 
