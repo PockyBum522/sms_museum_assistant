@@ -90,7 +90,7 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
       };
 
     // Sending off user text for evaluation
-    Promise.resolve(request(options, function (err, response) {
+    Promise.await(request(options, function (err, response) {
         const statusCode = response.statusCode;
         if (err || Object.keys(responses).indexOf(statusCode.toString()) !== -1) {
           throw new Error(responses[statusCode]);
