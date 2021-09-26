@@ -79,18 +79,16 @@ const symblRequestHeaders = {
     'Authorization': `Bearer ${symblAccessToken}`
 };
 
-let symblJobId = null; // Real value
-
-async function createSymblJobWithSmsBody(reqBody){
+async function createSymblJobFromSmsBody(smsReqBody){
 
     const symblSmsSubmitRequestJson = {
         "messages": [
-        {
-            "payload": {
-                "content": req.body.data.payload.text,
-                "contentType": "text/plain"
+            {
+                "payload": {
+                    "content": req.body.data.payload.text,
+                    "contentType": "text/plain"
+                }
             }
-        }
         ]
     };
 
@@ -99,23 +97,13 @@ async function createSymblJobWithSmsBody(reqBody){
     })
     .then((res) => {
 
-        symblConversationId = res.data.conversationId;
-        symblJobId = res.data.jobId;
+        let symblConversationId = res.data.conversationId;
+        let symblJobId = res.data.jobId;
 
-        console.log(symblConversationId);
-        console.log(res.data.jobId);
+        console.log(`Returning conversation ID: ${ symblConversationId } and jobId: ${ symblJobId }`);
+    
+        return [symblConversationId, symblJobId]
 
-        axios.get(`https://api.symbl.ai/v1/job/${res.data.jobId}`, {
-            headers: symblRequestHeaders
-        })
-        .then((res) => {
-            
-            console.log(`Returning convId123: ${ symblConversationId }`)
-            return symblConversationId; // Real return
-
-        }).catch((err) => {
-            console.error(err);
-        })
     }).catch((err) => {
         console.error(err);
     });
@@ -171,9 +159,9 @@ expressApp.post(`/${incomingWebhookEndpoint}`, (req, res) => {
     }
 
     // Otherwise:
-    await createSymblJobWithSmsBody(req.body)
+    await createSymblJobFromSmsBody(req.body)
     .then(
-        (conversationId) => console.log(`Promise fulfilled, conversationId: ${conversationId}`)
+        (conversationId, jobId) => console.log(`Promise fulfilled, conversationId: ${conversationId} and jobId on the other side is ${jobId}`)
         //makeSymblSentimentRequest(symblConversationId)
     );    
 
