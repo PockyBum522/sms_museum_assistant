@@ -35,7 +35,7 @@ expressApp.use(bodyParser.json(bodyParserOptions));
 // MAIN CALL
 startUserReviewProcess();
 
-createSymblJobFromSmsBody(req.body)
+createSymblJobFromSmsBody()
     .then(
         () => {
             
