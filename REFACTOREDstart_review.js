@@ -153,7 +153,7 @@ expressApp.post(`/${incomingTelnyxWebhookEndpoint}`, (req, res) => {
             
             console.log(`Job created from SMS body, conversation ID: ${ symblConversationId } and jobId: ${ symblJobId }`);           
 
-        });    
+        }).catch((err) => console.error(err));    
 
     // Send response
 
