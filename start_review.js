@@ -100,10 +100,11 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
         .then((res) => {
             console.log(res.data.status);
             // console.log(res);
+            if(res.data.status === 'completed') {
+                console.log("job is DONE son");
+            }
             // axios.get(`https://api.symbl.ai/v1/conversations/${conversationId}/messages?sentiment=true`)
             // .then((res) => {
-            //     // if(res.data.status === 'completed') {
-            //     // }
             // }).catch((err) => {
             //     // console.error(err);
             // })
