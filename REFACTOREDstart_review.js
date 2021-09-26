@@ -174,11 +174,14 @@ expressApp.post(`/${incomingWebhookEndpoint}`, (req, res) => {
     // Otherwise:
     createSymblJobFromSmsBody(req.body)
     .then(
-        (conversationId, jobId) => {
+        (returnData) => {
             
             console.log(`Promise fulfilled, conversationId: ${conversationId} and jobId on the other side is ${jobId}`)
 
-            makeSymblSentimentRequest(symblConversationId, jobId)
+            let conversationId = returnData[0]
+            let jobId = returnData[1]
+
+            makeSymblSentimentRequest(conversationId, jobId)
             .then(() => {
          
                 console.log("Sentiment req finished. ")
