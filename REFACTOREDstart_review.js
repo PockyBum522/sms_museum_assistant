@@ -121,16 +121,21 @@ function createSymblJobFromSmsBody(smsReqBody){
 function makeSymblSentimentRequest(symblConversationId, symblJobId) {
     
     return new Promise(() => {
-        const finished = checkIfSymblJobIsCompleted(symblJobId);
 
-        if(finished) {
+        checkIfSymblJobIsCompleted(symblJobId)
+        .then(() =>{
+
+            console.log('Requesting sentiment GET now');
+
             axios.get(`https://api.symbl.ai/v1/conversations/${symblConversationId}/messages?sentiment=true`, { headers: symblRequestHeaders})
             .then((res) => {
+                
                 return;
+
             }).catch((err) => {
                 console.error(err);
-            });
-        }
+            })
+        })            
     })
 }
 
@@ -175,7 +180,7 @@ expressApp.post(`/${incomingWebhookEndpoint}`, (req, res) => {
     createSymblJobFromSmsBody(req.body)
     .then(
         (returnData) => {
-            
+
             let conversationId = returnData[0]
             let jobId = returnData[1]
 
