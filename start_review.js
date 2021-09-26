@@ -101,7 +101,7 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
             headers: headers
         })
         .then((res) => {
-            
+            checkIfCompleted();
         }).catch((err) => {
             console.error(err);
         })
