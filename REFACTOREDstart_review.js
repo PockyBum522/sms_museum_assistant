@@ -60,6 +60,11 @@ function messagePreviouslyReceived(reqBody) {
 
 // Main function, the endpoint below is called by Telnyx on message response
 function startUserReviewProcess(){
+
+    console.log();
+    console.log();
+    console.log();
+
     telnyx.messages
         .create(
         {
@@ -101,7 +106,7 @@ function createSymblJobFromSmsBody(smsResponseBody){
                 ]
             };
             
-            console.log('About to submit job to Symbl.ai');
+            console.log(`About to submit job to Symbl.ai from SMS: ${smsResponseBody.data.payload.text}`);
 
             axios.post('https://api.symbl.ai/v1/process/text', symblSmsSubmitRequestJson, {
                 headers: symblRequestHeaders
