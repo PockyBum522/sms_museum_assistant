@@ -81,37 +81,41 @@ const symblRequestHeaders = {
 
 function createSymblJobFromSmsBody(smsReqBody){
 
-    return new Promise(function(resolve, reject) {
+    return new Promise(
+        function(resolve, reject) {
         
-        const symblSmsSubmitRequestJson = {
-            "messages": [
-                {
-                    "payload": {
-                        "content": req.body.data.payload.text,
-                        "contentType": "text/plain"
+            const symblSmsSubmitRequestJson = {
+                "messages": [
+                    {
+                        "payload": {
+                            "content": req.body.data.payload.text,
+                            "contentType": "text/plain"
+                        }
                     }
-                }
-            ]
-        };
-        
-        console.log('First post');
+                ]
+            };
+            
+            console.log('First');
 
-        axios.post('https://api.symbl.ai/v1/process/text', symblSmsSubmitRequestJson, {
-            headers: symblRequestHeaders
-        })
-        .then((res) => {
+            axios.post('https://api.symbl.ai/v1/process/text', symblSmsSubmitRequestJson, {
+                headers: symblRequestHeaders
+            })
+            .then((res) => {
 
-            let symblConversationId = res.data.conversationId;
-            let symblJobId = res.data.jobId;
+                let symblConversationId = res.data.conversationId;
+                let symblJobId = res.data.jobId;
 
-            console.log(`Returning conversation ID: ${ symblConversationId } and jobId: ${ symblJobId }`);
-        
-            resolve([symblConversationId, symblJobId])
+                console.log(`Returning conversation ID: ${ symblConversationId } and jobId: ${ symblJobId }`);
+            
+                resolve([symblConversationId, symblJobId])
 
-        }).catch((err) => {
-            console.error(err);
-        })
-    }
+            }).catch((err) => {
+                
+                console.error(err);
+                reject(err)
+
+            })        
+    })
 }
 
 // async function makeSymblSentimentRequest() {
