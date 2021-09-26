@@ -146,6 +146,8 @@ expressApp.post(`/${incomingTelnyxWebhookEndpoint}`, (req, res) => {
 
     console.log("...was incoming message, creating job")
 
+    console.log(`Creating job from SMS: ${req.body}`)
+
     // Otherwise:
     createSymblJobFromSmsBody(req.body)
     .then((response) => {
