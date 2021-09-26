@@ -51,22 +51,22 @@ function messagePreviouslyReceived(reqBody) {
 
 // Main function
 function startUserReviewProcess(){
-    telnyx.messages
-    .create(
-    {
-        'from': '+12182203711', // Your Telnyx number
-        'to': formattedPhoneNumber,
-        'text': reviewPromptText
-    })
-    .then(() => {
-        console.log(`Review message sent for: ${ formattedPhoneNumber }`)
-        console.log(`Now listening for response on: /${incomingWebhookEndpoint}`)
-    })
-    .catch(
-        (err) => {
-            console.error(err)
-        }
-    );
+    // telnyx.messages
+    // .create(
+    // {
+    //     'from': '+12182203711', // Your Telnyx number
+    //     'to': formattedPhoneNumber,
+    //     'text': reviewPromptText
+    // })
+    // .then(() => {
+    //     console.log(`Review message sent for: ${ formattedPhoneNumber }`)
+    //     console.log(`Now listening for response on: /${incomingWebhookEndpoint}`)
+    // })
+    // .catch(
+    //     (err) => {
+    //         console.error(err)
+    //     }
+    // );
 };
 
 // Symbl workers
@@ -75,8 +75,7 @@ const symblRequestHeaders = {
     'Authorization': `Bearer ${symblAccessToken}`
 };
 
-//let symblConversationId = null;
-let symblJobId = null;
+let symblJobId = null; // Real value
 
 async function createSymblJobWithSmsBody(reqBody){
 
@@ -107,14 +106,14 @@ async function createSymblJobWithSmsBody(reqBody){
         })
         .then((res) => {
             
+            return symblConversationId; // Real return
+
         }).catch((err) => {
             console.error(err);
         })
     }).catch((err) => {
         console.error(err);
     });
-
-    return symblConversationId;
 }
 
 async function makeSymblSentimentRequest() {
@@ -169,7 +168,8 @@ expressApp.post(`/${incomingWebhookEndpoint}`, (req, res) => {
     // Otherwise:
     await createSymblJobWithSmsBody(req.body)
     .then(
-        makeSymblSentimentRequest(symblConversationId)
+        (conversationId) => console.log(conversationId)
+        //makeSymblSentimentRequest(symblConversationId)
     );    
 
     // Send response
@@ -179,8 +179,3 @@ expressApp.post(`/${incomingWebhookEndpoint}`, (req, res) => {
 expressApp.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 })
-
-
-
-
-
