@@ -140,7 +140,7 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
                 //     console.log("_-_-_-_-_-_-");
                 // }
 
-                console.log(JSON.stringify(res))
+                console.log(res.toJSON())
         
             }).catch((err) => {
                 console.error(err);
