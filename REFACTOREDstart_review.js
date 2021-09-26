@@ -88,7 +88,6 @@ function createSymblJobFromSmsBody(smsReqBody){
         (resolve, reject) => {
         
             const symblSmsSubmitRequestJson = {
-                "webhookUrl" : "http://pockybum522.com/symblJobUpdatesWebhook",
                 "messages": [
                     {
                         "payload": {
@@ -96,7 +95,8 @@ function createSymblJobFromSmsBody(smsReqBody){
                             "contentType": "text/plain"
                         }
                     }
-                ]
+                ],
+                "webhookUrl" : "http://pockybum522.com/symblJobUpdatesWebhook"
             };
             
             console.log('First');
