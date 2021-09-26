@@ -4,6 +4,8 @@ const telnyx = require('telnyx')('KEY017C1DE7B63E8ABC4ECB54DF31105EEC_49fQTrNX8G
 const bodyParser = require('body-parser')
 const request = require('request');
 
+
+
 const responses = {
     400: 'Bad Request! Please refer docs for correct input fields.',
     401: 'Unauthorized. Please generate a new access token.',
@@ -23,13 +25,13 @@ let formattedPhoneNumber = `+14074632925`;
 
 let lastTenReceivedIDsArray = [];
 
-var options = {
+var bodyParserOptions = {
     inflate: true,
     limit: '100kb',
     type: 'application/json'
 };
 
-app.use(bodyParser.json(options));
+app.use(bodyParser.json(bodyParserOptions));
 
 telnyx.messages
       .create(
@@ -67,6 +69,26 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
     if(!isIncomingMessage(req.body) || messagePreviouslyReceived(req.body)) {
         return;
     }
+
+    const options = {
+        'method': 'POST',
+        'url': 'https://api.symbl.ai/v1/process/text',
+        'headers': {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({
+          "messages": [
+            {
+              "payload": {
+                "content": req.body.data.payload.text,
+                "contentType": "text/plain"
+              }
+            }
+          ]
+        })
+      };
+
     // Sending off user text for evaluation
     request(options, function (err, response) {
         const statusCode = response.statusCode;
@@ -90,24 +112,7 @@ const accessToken = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlFVUTRNemhDUVV
 
 // set your access token here. See https://docs.symbl.ai/docs/developer-tools/authentication
 
-// const options = {
-//   'method': 'POST',
-//   'url': 'https://api.symbl.ai/v1/process/text',
-//   'headers': {
-//     'Content-Type': 'application/json',
-//     'Authorization': `Bearer ${accessToken}`
-//   },
-//   body: JSON.stringify({
-//     "messages": [
-//       {
-//         "payload": {
-//           "content": "This museum was fun. I had a great time with my family. We enjoyed all the sights and sounds you wonderful people had to offer. The bathroom cleanliness was alright.",
-//           "contentType": "text/plain"
-//         }
-//       }
-//     ]
-//   })
-// };
+
 
 
 
