@@ -70,26 +70,26 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
         return;
     }
 
-    const options = {
-        'method': 'POST',
-        'headers': {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify({
-          "messages": [
-            {
-              "payload": {
-                "content": req.body.data.payload.text,
-                "contentType": "text/plain"
-              }
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+    };
+
+    const data = {
+        "messages": [
+        {
+            "payload": {
+            "content": req.body.data.payload.text,
+            "contentType": "text/plain"
             }
-          ]
-        })
-      };
+        }
+        ]
+    };
 
     // const sendUserReview = new Request('', options);
-    axios.post('https://api.symbl.ai/v1/process/text', options)
+    axios.post('https://api.symbl.ai/v1/process/text', data, {
+        headers: headers
+    })
     .then((res) => {
         console.log(res);
     }).catch((err) => {
