@@ -167,7 +167,7 @@ expressApp.post(`/${incomingTelnyxWebhookEndpoint}`, (req, res) => {
 expressApp.post(`/symblJobUpdatesWebhook`, (req, res) => {
     
     console.log("=======================================================================");
-    console.log(req.body.status);
+    console.log(req);
 
     if (req.body.status === 'completed'){
         console.log ("Run job sentiment get here")
