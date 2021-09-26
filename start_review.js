@@ -94,7 +94,7 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
         const conversationId = res.data.conversationId;
         console.log(conversationId);
         console.log(res.data.jobId);
-        axios.post(`https://api.symbl.ai/v1/job/${res.data.jobId}`, {}, {
+        axios.get(`https://api.symbl.ai/v1/job/${res.data.jobId}`, {}, {
             headers: headers
         })
         .then((res) => {
