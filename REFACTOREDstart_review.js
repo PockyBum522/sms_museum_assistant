@@ -144,7 +144,13 @@ expressApp.post(`/${incomingTelnyxWebhookEndpoint}`, (req, res) => {
     
     console.log(`Some incoming nonsense from Telnyx`);           
 
+    console.log(req.body)
+
+    console.log(!isIncomingMessage(req.body) || messagePreviouslyReceived(req.body));
+    console.log("^^^^")
+
     if(!isIncomingMessage(req.body) || messagePreviouslyReceived(req.body)) {
+        
         return;
     }
 
