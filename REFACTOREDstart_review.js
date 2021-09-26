@@ -164,7 +164,7 @@ expressApp.post(`/${incomingTelnyxWebhookEndpoint}`, (req, res) => {
 })
 
 // Webhook endpoint that takes in all Symbl job updates
-expressApp.get(`/symblJobUpdatesWebhook`, (req, res) => {
+expressApp.post(`/symblJobUpdatesWebhook`, (req, res) => {
     
     console.log("=======================================================================");
     console.log(req.body.status);
