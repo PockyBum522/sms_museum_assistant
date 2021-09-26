@@ -86,7 +86,7 @@ function createSymblJobFromSmsBody(smsReqBody){
 
     return new Promise(
         (resolve, reject) => {
-        
+           
             const symblSmsSubmitRequestJson = {
                 "messages": [
                     {
@@ -142,9 +142,13 @@ function getSymblSentiment() {
 // Webhook endpoint that takes in all Telnyx responses
 expressApp.post(`/${incomingTelnyxWebhookEndpoint}`, (req, res) => {
     
+    console.log(`Some incoming nonsense from Telnyx`);           
+
     if(!isIncomingMessage(req.body) || messagePreviouslyReceived(req.body)) {
         return;
     }
+
+    console.log("...was incoming message, creating job")
 
     // Otherwise:
     createSymblJobFromSmsBody(req.body)
