@@ -35,15 +35,6 @@ expressApp.use(bodyParser.json(bodyParserOptions));
 // MAIN CALL
 startUserReviewProcess();
 
-createSymblJobFromSmsBody()
-    .then(
-        () => {
-            
-            console.log(`Job created from SMS body, conversation ID: ${ symblConversationId } and jobId: ${ symblJobId }`);           
-
-        }).catch((err) => console.error(err));    
-
-
 // Validation logic
 function isIncomingMessage(reqBody) {
     return reqBody.data.event_type === "message.received";
@@ -62,79 +53,69 @@ function messagePreviouslyReceived(reqBody) {
 
 // Main function, the endpoint below is called by Telnyx on message response
 function startUserReviewProcess(){
-    // telnyx.messages
-    //     .create(
-    //     {
-    //         'from': '+12182203711', // Your Telnyx number
-    //         'to': formattedPhoneNumber,
-    //         'text': reviewPromptText
-    //     })
-    //     .then(() => {
+    telnyx.messages
+        .create(
+        {
+            'from': '+12182203711', // Your Telnyx number
+            'to': formattedPhoneNumber,
+            'text': reviewPromptText
+        })
+        .then(() => {
 
-    //         console.log(`Review message sent for: ${ formattedPhoneNumber }`)
-    //         console.log(`Now listening for response on: /${incomingTelnyxWebhookEndpoint}`)
+            console.log(`Review message sent for: ${ formattedPhoneNumber }`)
+            console.log(`Now listening for response on: /${incomingTelnyxWebhookEndpoint}`)
 
-    //     })
-    //     .catch(
-    //         (err) => {
-    //             console.error(err)
-    //         }
-    //     );
+        })
+        .catch(
+            (err) => {
+                console.error(err)
+        });
 };
 
-
-
-let symblConversationId = null;
-let symblJobId = null;
-
-function createSymblJobFromSmsBody(){
+function createSymblJobFromSmsBody(smsResponseBody){
 
     return new Promise(
-
         (resolve, reject) => {
-           
-        // Symbl workers
-        const symblRequestHeaders = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${symblAccessToken}`
-        };
-
+            
+            // Symbl workers
+            const symblRequestHeaders = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${symblAccessToken}`
+            };
 
             const symblSmsSubmitRequestJson = {
                 "messages": [
                     {
                         "payload": {
-                            //"content": smsReqBody.data.payload.text,
-                            "content": "teeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeest",
+                            "content": smsResponseBody.data.payload.text,
                             "contentType": "text/plain"
                         }
                     }
-                ],
-                "webhookUrl" : "http://pockybum522.com/symblJobUpdatesWebhook6"
+                ]
             };
             
-            console.log('First');
+            console.log('About to submit job to Symbl.ai');
 
             axios.post('https://api.symbl.ai/v1/process/text', symblSmsSubmitRequestJson, {
                 headers: symblRequestHeaders
             })
             .then((res) => {
 
-                symblConversationId = res.data.conversationId;
-                symblJobId = res.data.jobId;
+                let symblConversationId = res.data.conversationId;
+                let symblJobId = res.data.jobId;
             
-                resolve();
+                resolve([symblConversationId, symblJobId]);
 
             }).catch((err) => {
                 
                 console.error(err);
                 reject(err);
 
-            })        
+            })
     })
 }
 
-function getSymblSentiment() {
+function getSymblSentiment(symblConversationId) {
     
     return new Promise((resolve, reject) => {
 
@@ -156,46 +137,38 @@ function getSymblSentiment() {
 // Webhook endpoint that takes in all Telnyx responses
 expressApp.post(`/${incomingTelnyxWebhookEndpoint}`, (req, res) => {
     
-    // console.log(`Some incoming nonsense from Telnyx`);           
+    console.log(`Some incoming data from Telnyx`);           
 
-    // if(!isIncomingMessage(req.body) || messagePreviouslyReceived(req.body)) {
+    if(!isIncomingMessage(req.body) || messagePreviouslyReceived(req.body)) {
         
-    //     return;
-    // }
+        return;
+    }
 
-    // console.log("...was incoming message, creating job")
+    console.log("...was incoming message, creating job")
 
-    // // Otherwise:
-    // createSymblJobFromSmsBody(req.body)
-    // .then(
-    //     () => {
+    // Otherwise:
+    createSymblJobFromSmsBody(req.body)
+    .then((response) => {
             
-    //         console.log(`Job created from SMS body, conversation ID: ${ symblConversationId } and jobId: ${ symblJobId }`);           
+        let symblConversationId = response.values[0];
+        let symblJobId = response.values[0];
 
-    //     }).catch((err) => console.error(err));    
+        console.log(`Job created from SMS body, conversation ID: ${ symblConversationId } and jobId: ${ symblJobId }`);           
+
+    }).catch((err) => console.error(err));    
 
     // Send response
 
 })
 
 // Webhook endpoint that takes in all Symbl job updates
-expressApp.post(`/symblJobUpdatesWebhook6`, (req, res) => {
+expressApp.post(`/symblJobUpdatesWebhook44`, (req, res) => {
     
-    console.log("webhook 4: =======================================================================");
     console.log(req.body);
 
     if (req.body.status === 'completed'){
         console.log ("Run job sentiment get here")
     }
-
-})
-
-// Webhook endpoint that takes in all Symbl job updates
-expressApp.post(`/symblJobUpdatesWebhook1`, (req, res) => {
-    
-    console.log("webhook1:");
-    console.log(req.body);
-
 
 })
 
