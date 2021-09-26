@@ -82,11 +82,7 @@ function startUserReviewProcess(){
     //     );
 };
 
-// Symbl workers
-const symblRequestHeaders = {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${symblAccessToken}`
-};
+
 
 let symblConversationId = null;
 let symblJobId = null;
@@ -94,8 +90,16 @@ let symblJobId = null;
 function createSymblJobFromSmsBody(){
 
     return new Promise(
+
         (resolve, reject) => {
            
+        // Symbl workers
+        const symblRequestHeaders = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${symblAccessToken}`
+        };
+
+
             const symblSmsSubmitRequestJson = {
                 "messages": [
                     {
