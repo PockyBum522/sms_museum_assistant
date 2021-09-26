@@ -82,7 +82,7 @@ const symblRequestHeaders = {
 function createSymblJobFromSmsBody(smsReqBody){
 
     return new Promise(
-        function(resolve, reject) {
+        (resolve, reject) => {
         
             const symblSmsSubmitRequestJson = {
                 "messages": [
@@ -112,7 +112,7 @@ function createSymblJobFromSmsBody(smsReqBody){
             }).catch((err) => {
                 
                 console.error(err);
-                reject(err)
+                reject(err);
 
             })        
     })
