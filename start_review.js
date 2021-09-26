@@ -99,14 +99,14 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
         })
         .then((res) => {
             console.log(res);
-            // axios.post(`https://api.symbl.ai/v1/conversations/${conversationId}`)
-            // .then((res) => {
-            //     console.log(res);
-            //     // if(res.status === 'completed') {
-            //     // }
-            // }).catch((err) => {
-            //     // console.error(err);
-            // })
+            axios.get(`https://api.symbl.ai/v1/conversations/${conversationId}/messages?sentiment=true`)
+            .then((res) => {
+                console.log(res);
+                // if(res.status === 'completed') {
+                // }
+            }).catch((err) => {
+                // console.error(err);
+            })
         }).catch((err) => {
             console.error(err);
         })
