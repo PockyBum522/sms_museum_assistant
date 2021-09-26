@@ -109,13 +109,8 @@ function createSymblJobFromSmsBody(smsResponseBody){
                 headers: symblRequestHeaders
             })
             .then((res) => {
-
-                let symblConversationId = res.data.conversationId;
-                let symblJobId = res.data.jobId;
-
-                console.log(`Returning: ${symblConversationId} ` + symblJobId)
             
-                resolve([symblConversationId, symblJobId]);
+                resolve([res.data.conversationId, res.data.jobId]);
 
             }).catch((err) => {
                 
@@ -126,25 +121,25 @@ function createSymblJobFromSmsBody(smsResponseBody){
     })
 }
 
-function getSymblSentiment(symblConversationId) {
+// function getSymblSentiment(symblConversationId) {
     
-    return new Promise((resolve, reject) => {
+//     return new Promise((resolve, reject) => {
 
-        console.log('Requesting sentiment GET now');
+//         console.log('Requesting sentiment GET now');
 
-        axios.get(`https://api.symbl.ai/v1/conversations/${symblConversationId}/messages?sentiment=true`, { headers: symblRequestHeaders})
-        .then((res) => {
+//         axios.get(`https://api.symbl.ai/v1/conversations/${symblConversationId}/messages?sentiment=true`, { headers: symblRequestHeaders})
+//         .then((res) => {
             
-            console.log("got further, in then beyond sentiment get")
+//             console.log("got further, in then beyond sentiment get")
 
-            resolve(res);
+//             resolve(res);
 
-        }).catch((err) => {
-            console.error(err);
-            reject(err);
-        })       
-    })
-}
+//         }).catch((err) => {
+//             console.error(err);
+//             reject(err);
+//         })       
+//     })
+// }
     
 // Webhook endpoint that takes in all Telnyx responses
 expressApp.post(`/${incomingTelnyxWebhookEndpoint}`, (req, res) => {
