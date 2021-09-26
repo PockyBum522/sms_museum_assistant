@@ -118,9 +118,9 @@ function createSymblJobFromSmsBody(smsReqBody){
     })
 }
 
-function makeSymblSentimentRequest(symblConversationId, symblJobId) {
+function getSymblSentiment(symblConversationId, symblJobId) {
     
-    return new Promise(() => {
+    return new Promise((resolve, reject) => {
 
         checkIfSymblJobIsCompleted(symblJobId)
         .then(() =>{
@@ -131,10 +131,11 @@ function makeSymblSentimentRequest(symblConversationId, symblJobId) {
             .then((res) => {
                 
                 console.log("got further, in then beyond sentiment get")
-                return;
+                resolve(res);
 
             }).catch((err) => {
                 console.error(err);
+                reject(err);
             })
         })            
     })
@@ -146,28 +147,21 @@ function checkIfSymblJobIsCompleted(symblJobId) {
     
         console.log('stassdfsfdfasfdfdsfasdrting into loop');
 
-        // let result = {data: {status: {}}};
+        let result = {data: {status: {}}};
 
-        //     do {
+        do {
 
-        //         // Check job status until status is completed, lazy, but this is demo
-        //         result = axios.get(`https://api.symbl.ai/v1/job/${symblJobId}`, { headers: symblRequestHeaders }).catch((err) => {console.error(err)});
-        //         console.log(`Status: ${result.data.status}`);
-        //         setTimeout(() => {}, 200);
+            // Check job status until status is completed, lazy, but this is demo
+            result = axios.get(`https://api.symbl.ai/v1/job/${symblJobId}`, { headers: symblRequestHeaders }).catch((err) => {console.error(err); reject(err); });
+            console.log(`Status: ${result.data.status}`);
+            setTimeout(() => {}, 200);
 
-        //     } while(result.data.status !== 'completed')
+        } while(result.data.status !== 'completed')
 
-        //     // Job has completed now!
-        //     console.log("got past while loop");
-            
-        //     return;
-
-        // }
-        // loop();
-
+        // Job has completed now!
+        console.log("got past while loop");
+        
         resolve();
-
-        reject();
 
     })
 }
@@ -189,10 +183,11 @@ expressApp.post(`/${incomingWebhookEndpoint}`, (req, res) => {
 
             console.log(`Promise fulfilled, conversationId: ${conversationId} and jobId on the other side is ${jobId}`)
 
-            makeSymblSentimentRequest(conversationId, jobId)
-            .then(() => {
+            getSymblSentiment(conversationId, jobId)
+            .then((res) => {
          
-                console.log("Sentiment req finished. ")
+                console.log("Sentiment req finished. ");
+                console.log(`res: ${res}`);
 
             })
         });    
