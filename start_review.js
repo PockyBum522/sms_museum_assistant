@@ -101,7 +101,6 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
             headers: headers
         })
         .then((res) => {
-            getSentiments();
             
         }).catch((err) => {
             console.error(err);
@@ -121,6 +120,8 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
                 setTimeout(() => {}, 200);
             } while(result.data.status !== 'completed')
             console.log("got past while loop");
+            getSentiments();
+
         }
         loop();
 
