@@ -106,7 +106,7 @@ function createSymblJobFromSmsBody(){
                         }
                     }
                 ],
-                "webhookUrl" : "http://pockybum522.com/symblJobUpdatesWebhook4"
+                "webhookUrl" : "http://pockybum522.com/symblJobUpdatesWebhook6"
             };
             
             console.log('First');
@@ -175,7 +175,7 @@ expressApp.post(`/${incomingTelnyxWebhookEndpoint}`, (req, res) => {
 })
 
 // Webhook endpoint that takes in all Symbl job updates
-expressApp.post(`/symblJobUpdatesWebhook4`, (req, res) => {
+expressApp.post(`/symblJobUpdatesWebhook6`, (req, res) => {
     
     console.log("webhook 4: =======================================================================");
     console.log(req.body);
