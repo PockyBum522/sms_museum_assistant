@@ -1,5 +1,4 @@
 require('dotenv').config();
-
 const telnyxApiKey = process.env.TELNYX_API_KEY
 const symblAccessToken = process.env.SYMBL_API_KEY
 
@@ -7,6 +6,8 @@ const express = require('express')
 const axios = require('axios')
 const telnyx = require('telnyx')(telnyxApiKey);
 const bodyParser = require('body-parser')
+
+console.log(`api key: ${telnyxApiKey}`);
 
 // CONFIGURATION
 const expressApp = express()
