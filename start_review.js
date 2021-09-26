@@ -64,6 +64,8 @@ function messagePreviouslyReceived(reqBody) {
 }
 
 app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
+    const conversationId = res.data.conversationId;
+    const jobId = res.data.jobId;
 
     // Validate message
     if(!isIncomingMessage(req.body) || messagePreviouslyReceived(req.body)) {
@@ -91,11 +93,10 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
         headers: headers
     })
     .then((res) => {
-        const conversationId = res.data.conversationId;
-        const jobId = res.data.jobId;
+        
         console.log(conversationId);
-        console.log(res.data.jobId);
-        axios.get(`https://api.symbl.ai/v1/job/${res.data.jobId}`, {
+        console.log(jobId);
+        axios.get(`https://api.symbl.ai/v1/job/${jobId}`, {
             headers: headers
         })
         .then((res) => {
