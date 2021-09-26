@@ -79,34 +79,39 @@ const symblRequestHeaders = {
     'Authorization': `Bearer ${symblAccessToken}`
 };
 
-async function createSymblJobFromSmsBody(smsReqBody){
+function createSymblJobFromSmsBody(smsReqBody){
 
-    const symblSmsSubmitRequestJson = {
-        "messages": [
-            {
-                "payload": {
-                    "content": req.body.data.payload.text,
-                    "contentType": "text/plain"
+    return new Promise(function(resolve, reject) {
+        
+        const symblSmsSubmitRequestJson = {
+            "messages": [
+                {
+                    "payload": {
+                        "content": req.body.data.payload.text,
+                        "contentType": "text/plain"
+                    }
                 }
-            }
-        ]
-    };
+            ]
+        };
+        
+        console.log('First post');
 
-    axios.post('https://api.symbl.ai/v1/process/text', symblSmsSubmitRequestJson, {
-        headers: symblRequestHeaders
-    })
-    .then((res) => {
+        axios.post('https://api.symbl.ai/v1/process/text', symblSmsSubmitRequestJson, {
+            headers: symblRequestHeaders
+        })
+        .then((res) => {
 
-        let symblConversationId = res.data.conversationId;
-        let symblJobId = res.data.jobId;
+            let symblConversationId = res.data.conversationId;
+            let symblJobId = res.data.jobId;
 
-        console.log(`Returning conversation ID: ${ symblConversationId } and jobId: ${ symblJobId }`);
-    
-        return [symblConversationId, symblJobId]
+            console.log(`Returning conversation ID: ${ symblConversationId } and jobId: ${ symblJobId }`);
+        
+            resolve([symblConversationId, symblJobId])
 
-    }).catch((err) => {
-        console.error(err);
-    });
+        }).catch((err) => {
+            console.error(err);
+        })
+    }
 }
 
 // async function makeSymblSentimentRequest() {
@@ -159,7 +164,7 @@ expressApp.post(`/${incomingWebhookEndpoint}`, (req, res) => {
     }
 
     // Otherwise:
-    await createSymblJobFromSmsBody(req.body)
+    createSymblJobFromSmsBody(req.body)
     .then(
         (conversationId, jobId) => console.log(`Promise fulfilled, conversationId: ${conversationId} and jobId on the other side is ${jobId}`)
         //makeSymblSentimentRequest(symblConversationId)
