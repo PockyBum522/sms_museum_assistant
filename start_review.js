@@ -99,25 +99,8 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
             headers: headers
         })
         .then((res) => {
-            console.log('starting into loop');
-            const loop = async testLoop => {
-                do {
-                    var result = await axios.get(`https://api.symbl.ai/v1/job/${jobId}`, { headers: headers }).catch((err) => {console.error(err)});
-                    console.log(`Status: ${result.data.status}`);
-                    setTimeout(() => {}, 200);
-                } while(result.data.status !== 'completed')
-                console.log("got past while loop");
-            }
+            getSentiments();
             
-            loop();
-
-            axios.get(`https://api.symbl.ai/v1/conversations/${conversationId}/messages?sentiment=true`, { headers: headers})
-            .then((res) => {
-                console.log("do something with the sentiment");
-                console.log(res);
-            }).catch((err) => {
-                console.error(err);
-            });
         }).catch((err) => {
             console.error(err);
         })
@@ -125,7 +108,34 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
         console.error(err);
     });
 
+    async function checkIfCompleted() {
+        console.log('starting into loop');
 
+        const loop = testLoop => {
+            do {
+                var result = await axios.get(`https://api.symbl.ai/v1/job/${jobId}`, { headers: headers }).catch((err) => {console.error(err)});
+                console.log(`Status: ${result.data.status}`);
+                setTimeout(() => {}, 200);
+            } while(result.data.status !== 'completed')
+            console.log("got past while loop");
+        }
+        loop();
+
+        return result.data.status;
+    }
+
+    async function getSentiments() {
+        const finished = await checkIfCompleted();
+        if(finished) {
+            axios.get(`https://api.symbl.ai/v1/conversations/${conversationId}/messages?sentiment=true`, { headers: headers})
+            .then((res) => {
+                console.log("do something with the sentiment");
+                console.log(res);
+            }).catch((err) => {
+                console.error(err);
+            });
+        }
+    }
 
 
     // fetch('https://api.symbl.ai/v1/process/text').then((res) => {
