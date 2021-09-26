@@ -65,7 +65,7 @@ function startUserReviewProcess(){
     telnyx.messages
         .create(
         {
-            'from': '+12182203711', // Your Telnyx number
+            'from': '+16182120374', // Your Telnyx number
             'to': formattedPhoneNumber,
             'text': reviewPromptText
         })
