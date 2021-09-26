@@ -103,7 +103,7 @@ app.post(`/${incomingWebhookEndpoint}`, (req, res) => {
                 let result = null;
                 while(result !== 'completed') {
                     console.log(result);
-                    result = await axios.get(`https://api.symbl.ai/v1/job/${res.data.jobId}`, { headers: headers });
+                    result = await axios.get(`https://api.symbl.ai/v1/job/${res.data.jobId}`, { headers: headers }).catch((err) => {console.error(err)});
                     setTimeout(200);
                 }
                 console.log("got past while loop");
