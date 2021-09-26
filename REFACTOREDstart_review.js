@@ -110,6 +110,8 @@ function createSymblJobFromSmsBody(smsResponseBody){
 
                 let symblConversationId = res.data.conversationId;
                 let symblJobId = res.data.jobId;
+
+                console.log(`Returning: ${symblConversationId} ` + symblJobId)
             
                 resolve([symblConversationId, symblJobId]);
 
@@ -132,6 +134,7 @@ function getSymblSentiment(symblConversationId) {
         .then((res) => {
             
             console.log("got further, in then beyond sentiment get")
+
             resolve(res);
 
         }).catch((err) => {
@@ -160,7 +163,7 @@ expressApp.post(`/${incomingTelnyxWebhookEndpoint}`, (req, res) => {
     .then((response) => {
             
         let symblConversationId = response.values[0];
-        let symblJobId = response.values[0];
+        let symblJobId = response.values[1];
 
         console.log(`Job created from SMS body, conversation ID: ${ symblConversationId } and jobId: ${ symblJobId }`);           
 
