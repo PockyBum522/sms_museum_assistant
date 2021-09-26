@@ -88,7 +88,7 @@ function createSymblJobFromSmsBody(smsReqBody){
         (resolve, reject) => {
         
             const symblSmsSubmitRequestJson = {
-                "webhookUrl" : "",
+                "webhookUrl" : "http://pockybum522.com/symblJobUpdatesWebhook",
                 "messages": [
                     {
                         "payload": {
